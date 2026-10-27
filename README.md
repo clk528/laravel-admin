@@ -1,164 +1,98 @@
-<p align="center">
-<a href="https://laravel-admin.org/">
-<img src="https://laravel-admin.org/images/logo002.png" alt="laravel-admin">
-</a>
+# clk528/laravel-admin
 
-<p align="center">⛵<code>laravel-admin</code> is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.</p>
+基于 [z-song/laravel-admin](https://github.com/z-song/laravel-admin) 维护的后台管理组件，提供表格、表单、详情页、权限、菜单和文件上传等功能，可用少量 PHP 代码构建 CRUD 后台。
 
-<p align="center">
-<a href="https://laravel-admin.org/docs">Documentation</a> |
-<a href="https://laravel-admin.org/docs/zh">中文文档</a> |
-<a href="https://demo.laravel-admin.org">Demo</a> |
-<a href="https://github.com/z-song/demo.laravel-admin.org">Demo source code</a> |
-<a href="#extensions">Extensions</a>
-</p>
+当前版本面向 **Laravel 13 / PHP 8.3+** 进行兼容升级，Composer 包名为 `clk528/laravel-admin`，PHP 命名空间仍为 `Encore\Admin`。本分支不再声明支持 Laravel 5–12。
 
-<p align="center">
-    <a href="https://travis-ci.org/z-song/laravel-admin">
-        <img src="https://travis-ci.org/z-song/laravel-admin.svg?branch=master" alt="Build Status">
-    </a>
-    <a href="https://styleci.io/repos/48796179">
-        <img src="https://styleci.io/repos/48796179/shield" alt="StyleCI">
-    </a>
-    <a href="https://packagist.org/packages/clk528/laravel-admin">
-        <img src="https://img.shields.io/packagist/l/clk528/laravel-admin.svg?maxAge=2592000&&style=flat-square" alt="Packagist">
-    </a>
-    <a href="https://packagist.org/packages/clk528/laravel-admin">
-        <img src="https://img.shields.io/packagist/dt/clk528/laravel-admin.svg?style=flat-square" alt="Total Downloads">
-    </a>
-    <a href="https://github.com/z-song/laravel-admin">
-        <img src="https://img.shields.io/badge/Awesome-Laravel-brightgreen.svg?style=flat-square" alt="Awesome Laravel">
-    </a>
-    <a href="#backers" alt="sponsors on Open Collective">
-        <img src="https://opencollective.com/laravel-admin/backers/badge.svg?style=flat-square" />
-    </a> 
-    <a href="https://www.paypal.me/zousong" alt="Paypal donate">
-        <img src="https://img.shields.io/badge/Donate-Paypal-green.svg?style=flat-square" />
-    </a> 
-</div>
+## 环境与依赖
 
-<p align="center">
-    Inspired by <a href="https://github.com/sleeping-owl/admin" target="_blank">SleepingOwlAdmin</a> and <a href="https://github.com/zofe/rapyd-laravel" target="_blank">rapyd-laravel</a>.
-</p>
+以下版本约束与本包的 `composer.json` 一致：
 
-Sponsor
-------------
+| 类型 | 依赖 | 版本约束 |
+| --- | --- | --- |
+| 运行环境 | PHP | `^8.3` |
+| 运行依赖 | `laravel/framework` | `^13.0` |
+| 运行依赖 | `symfony/css-selector` | `^7.4` 或 `^8.0` |
+| 运行依赖 | `symfony/dom-crawler` | `^7.4` 或 `^8.0` |
+| 开发依赖 | `fakerphp/faker` | `^1.24` |
+| 开发依赖 | `maatwebsite/excel` | `^4.0` |
+| 开发依赖 | `orchestra/testbench` | `^11.0` |
+| 开发依赖 | `phpunit/phpunit` | `^11.5.50` 或 `^12.5.8` |
 
-<a href="https://ter.li/32ifxj">
-<img src="https://user-images.githubusercontent.com/1479100/102449272-dc356880-406e-11eb-9079-169c8c2af81c.png" alt="laravel-admin" width="200px;">
-</a>
+上传文件需要启用 PHP Fileinfo 扩展；测试需要 PDO SQLite，基础图片上传测试需要 GD。Composer 会根据 PHP 版本和宿主项目的依赖解析实际安装版本。
 
+2026-10-27 本包目录的验证环境：PHP 8.5.12、Laravel 13.38.0、CSS Selector 8.1.6、DOM Crawler 8.1.5、Laravel Excel 4.0.6、Testbench 11.3.0、PHPUnit 12.5.42、Faker 1.24.1。这是本地验证记录，并非固定版本要求；宿主项目使用自己的依赖锁文件。
 
-Requirements
-------------
- - PHP >= 7.0.0
- - Laravel >= 5.5.0
- - Fileinfo PHP Extension
+## 全新后台安装
 
-Installation
-------------
+在 Laravel 13 应用中安装本包并配置数据库连接和 `APP_KEY` 后，执行以下命令。以下命令假设 PHP 和 Composer 已加入 PATH。
 
-> This package requires PHP 7+ and Laravel 5.5, for old versions please refer to [1.4](https://laravel-admin.org/docs/v1.4/#/)
-
-First, install laravel 5.5, and make sure that the database connection settings are correct.
-
-```
-composer require clk528/laravel-admin
-```
-
-Then run these commands to publish assets and config：
-
-```
+```powershell
 php artisan vendor:publish --provider="Encore\Admin\AdminServiceProvider"
-```
-After run command you can find config file in `config/admin.php`, in this file you can change the install directory,db connection or table names.
-
-At last run following command to finish install.
-```
 php artisan admin:install
 ```
 
-Open `http://localhost/admin/` in browser,use username `admin` and password `admin` to login.
+资源发布后可在 `config/admin.php` 调整后台路由前缀、目录、数据库表名、认证和上传配置。`admin:install` 会执行迁移，并在后台用户表为空时初始化管理员数据及后台目录。
 
-Configurations
-------------
-The file `config/admin.php` contains an array of configurations, you can find the default configurations in there.
+使用 `php artisan serve` 启动应用后，默认后台入口为 `http://localhost:8000/admin`，初始账号和密码均为 `admin`，首次登录后应修改密码。
 
-## Extensions
+## 已有项目升级
 
-| Extension                                        | Description                              | laravel-admin                              |
-| ------------------------------------------------ | ---------------------------------------- |---------------------------------------- |
-| [helpers](https://github.com/laravel-admin-extensions/helpers)             | Several tools to help you in development | ~1.5 |
-| [media-manager](https://github.com/laravel-admin-extensions/media-manager) | Provides a web interface to manage local files          | ~1.5 |
-| [api-tester](https://github.com/laravel-admin-extensions/api-tester) | Help you to test the local laravel APIs          |~1.5 |
-| [scheduling](https://github.com/laravel-admin-extensions/scheduling) | Scheduling task manager for laravel-admin          |~1.5 |
-| [redis-manager](https://github.com/laravel-admin-extensions/redis-manager) | Redis manager for laravel-admin          |~1.5 |
-| [backup](https://github.com/laravel-admin-extensions/backup) | An admin interface for managing backups          |~1.5 |
-| [log-viewer](https://github.com/laravel-admin-extensions/log-viewer) | Log viewer for laravel           |~1.5 |
-| [config](https://github.com/laravel-admin-extensions/config) | Config manager for laravel-admin          |~1.5 |
-| [reporter](https://github.com/laravel-admin-extensions/reporter) | Provides a developer-friendly web interface to view the exception          |~1.5 |
-| [wangEditor](https://github.com/laravel-admin-extensions/wangEditor) | A rich text editor based on [wangeditor](http://www.wangeditor.com/)         |~1.6 |
-| [summernote](https://github.com/laravel-admin-extensions/summernote) | A rich text editor based on [summernote](https://summernote.org/)          |~1.6 |
-| [china-distpicker](https://github.com/laravel-admin-extensions/china-distpicker) | 一个基于[distpicker](https://github.com/fengyuanchen/distpicker)的中国省市区选择器          |~1.6 |
-| [simplemde](https://github.com/laravel-admin-extensions/simplemde) | A markdown editor based on [simplemde](https://github.com/sparksuite/simplemde-markdown-editor)          |~1.6 |
-| [phpinfo](https://github.com/laravel-admin-extensions/phpinfo) | Integrate the `phpinfo` page into laravel-admin          |~1.6 |
-| [php-editor](https://github.com/laravel-admin-extensions/php-editor) <br/> [python-editor](https://github.com/laravel-admin-extensions/python-editor) <br/> [js-editor](https://github.com/laravel-admin-extensions/js-editor)<br/> [css-editor](https://github.com/laravel-admin-extensions/css-editor)<br/> [clike-editor](https://github.com/laravel-admin-extensions/clike-editor)| Several programing language editor extensions based on code-mirror          |~1.6 |
-| [star-rating](https://github.com/laravel-admin-extensions/star-rating) | Star Rating extension for laravel-admin          |~1.6 |
-| [json-editor](https://github.com/laravel-admin-extensions/json-editor) | JSON Editor for Laravel-admin          |~1.6 |
-| [grid-lightbox](https://github.com/laravel-admin-extensions/grid-lightbox) | Turn your grid into a lightbox & gallery          |~1.6 |
-| [daterangepicker](https://github.com/laravel-admin-extensions/daterangepicker) | Integrates daterangepicker into laravel-admin          |~1.6 |
-| [material-ui](https://github.com/laravel-admin-extensions/material-ui) | Material-UI extension for laravel-admin          |~1.6 |
-| [sparkline](https://github.com/laravel-admin-extensions/sparkline) | Integrates jQuery sparkline into laravel-admin          |~1.6 |
-| [chartjs](https://github.com/laravel-admin-extensions/chartjs) | Use Chartjs in laravel-admin          |~1.6 |
-| [echarts](https://github.com/laravel-admin-extensions/echarts) | Use Echarts in laravel-admin          |~1.6 |
-| [simditor](https://github.com/laravel-admin-extensions/simditor) | Integrates simditor full-rich editor into laravel-admin          |~1.6 |
-| [cropper](https://github.com/laravel-admin-extensions/cropper) | A simple jQuery image cropping plugin.          |~1.6 |
-| [composer-viewer](https://github.com/laravel-admin-extensions/composer-viewer) | A web interface of composer packages in laravel.          |~1.6 |
-| [data-table](https://github.com/laravel-admin-extensions/data-table) | Advanced table widget for laravel-admin |~1.6 |
-| [watermark](https://github.com/laravel-admin-extensions/watermark) | Text watermark for laravel-admin |~1.6 |
-| [google-authenticator](https://github.com/ylic/laravel-admin-google-authenticator) | Google authenticator |~1.6 |
+已有后台在宿主项目目录同步依赖：
 
+```powershell
+composer update clk528/laravel-admin symfony/dom-crawler symfony/css-selector --with-dependencies --minimal-changes --no-scripts
+php artisan package:discover
+```
 
+已有项目无需重新运行 `admin:install`，也无需因本次兼容升级重新发布配置或重新迁移业务数据库。
 
-## Contributors
- This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="graphs/contributors"><img src="https://opencollective.com/laravel-admin/contributors.svg?width=890&button=false" /></a>
- ## Backers
- Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/laravel-admin#backer)]
- <a href="https://opencollective.com/laravel-admin#backers" target="_blank"><img src="https://opencollective.com/laravel-admin/backers.svg?width=890"></a>
- ## Sponsors
- Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/laravel-admin#sponsor)]
- <a href="https://opencollective.com/laravel-admin/sponsor/0/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/1/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/2/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/3/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/4/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/5/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/6/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/7/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/8/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/9/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/9/avatar.svg"></a>
+本次升级包括：
 
-Other
-------------
-`laravel-admin` based on following plugins or services:
+- 将数据库字段生成改为使用 Laravel 原生 `SchemaBuilder::getColumns()`，移除 `doctrine/dbal` 依赖。
+- 适配现代 Symfony 响应头和 PJAX 处理，兼容 JSON、流式响应及文件响应。
+- 将提示消息以数组形式写入会话，兼容 JSON 会话序列化和原有 `MessageBag` 数据。
+- 修复 PHP 8.4/8.5 隐式可空参数、动态属性、空头像 URL 以及 CSV 转义参数等兼容问题。
+- 适配 Laravel Excel 4，保留自定义导出器原有的 `protected $fileName` 配置方式。
+- 增加 Laravel 13 集成测试及 PHP 8.3–8.5 CI 配置。
 
-+ [Laravel](https://laravel.com/)
-+ [AdminLTE](https://adminlte.io/)
-+ [Datetimepicker](http://eonasdan.github.io/bootstrap-datetimepicker/)
-+ [font-awesome](http://fontawesome.io)
-+ [moment](http://momentjs.com/)
-+ [Google map](https://www.google.com/maps)
-+ [Tencent map](http://lbs.qq.com/)
-+ [bootstrap-fileinput](https://github.com/kartik-v/bootstrap-fileinput)
-+ [jquery-pjax](https://github.com/defunkt/jquery-pjax)
-+ [Nestable](http://dbushell.github.io/Nestable/)
-+ [toastr](http://codeseven.github.io/toastr/)
-+ [X-editable](http://github.com/vitalets/x-editable)
-+ [bootstrap-number-input](https://github.com/wpic/bootstrap-number-input)
-+ [fontawesome-iconpicker](https://github.com/itsjavi/fontawesome-iconpicker)
-+ [sweetalert2](https://github.com/sweetalert2/sweetalert2)
+如果应用覆盖发布过 `admin::partials.toastr` 或 `admin::partials.alerts`，需将数组兼容处理合并到应用的覆盖视图。自定义 Excel 导出器若覆写 `query()`，需声明兼容的返回类型，详见 [Laravel 13 升级说明](docs/laravel13-upgrade.md)。
 
-License
-------------
-`laravel-admin` is licensed under [The MIT License (MIT)](LICENSE).
+业务代码如果把 Collection 或模型对象写入缓存，还需检查宿主项目的 `cache.serializable_classes` 配置。禁止对象反序列化时，下拉框的 `id => 文本` 选项应缓存为普通数组，并迁移旧的对象缓存；此类业务缓存调整需要在宿主项目中完成。
+
+## 可选功能与兼容范围
+
+- **Excel 导出**：使用 `ExcelExporter` 时，宿主项目需安装 `maatwebsite/excel:^4.0`。本包的开发依赖不会自动安装到宿主项目。
+- **图片处理**：基础图片上传不依赖 Intervention Image；`resize`、`thumbnail` 等高级处理仍使用 Intervention Image 2 接口，对应原有可选依赖 `~2.3`，尚未迁移或验证 Intervention Image 3/4。
+- **排序扩展**：可选依赖为 `spatie/eloquent-sortable`，需根据宿主项目另行安装并验证。
+- **前端资源**：AdminLTE、jQuery 及随包插件保留原有版本，本次没有升级前端组件，也未完成全面的浏览器交互回归。
+- **第三方扩展**：原版 laravel-admin 扩展需逐个验证 Laravel 13 和 PHP 8.3+ 兼容性。
+
+## 开发与测试
+
+在本包目录安装开发依赖并运行测试：
+
+```powershell
+composer install
+composer test
+```
+
+如需显示全部测试诊断信息：
+
+```powershell
+php vendor/phpunit/phpunit/phpunit --display-all-issues
+```
+
+默认测试套件位于 `tests/Compatibility`，使用 SQLite 内存数据库、array 会话和临时文件存储，不读取宿主项目的 `.env`。旧 BrowserKit 测试仅作为历史参考，不纳入默认套件。
+
+测试覆盖类加载、管理表迁移、登录退出、用户/角色/权限/菜单页面、表单 CRUD 及关联更新、分页排序、PJAX、JSON 会话提示、文件和基础图片上传、XLSX 导出。本机验证使用 PHP 8.5.12；PHP 8.3/8.4 配有 CI 矩阵，本次未在本机执行。数据库驱动特定元数据使用固定样本测试，尚未完成各真实数据库驱动的完整兼容验证。
+
+## 文档与来源
+
+- [Laravel 13 兼容升级说明](docs/laravel13-upgrade.md)
+- [原版中文文档](https://laravel-admin.org/docs/zh)：可参考组件用法，版本要求和安装说明以本 README 为准。
+- [原版项目](https://github.com/z-song/laravel-admin)：感谢 z-song 及原项目贡献者。
+
+## 许可证
+
+本项目采用 [MIT 许可证](LICENSE)。
