@@ -1,0 +1,57 @@
+{
+    "name": "clk528/laravel-admin",
+    "description": "laravel admin",
+    "type": "library",
+    "keywords": ["laravel", "admin", "grid", "form"],
+    "homepage": "https://github.com/z-song/laravel-admin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zsong",
+            "email": "zosong@126.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "symfony/css-selector": "^7.4|^8.0",
+        "symfony/dom-crawler": "^7.4|^8.0",
+        "laravel/framework": "^13.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "maatwebsite/excel": "^4.0",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^11.5.50|^12.5.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Encore\\Admin\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Encore\\Admin\\Tests\\Compatibility\\": "tests/Compatibility/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/phpunit/phpunit/phpunit"
+    },
+    "suggest": {
+        "maatwebsite/excel": "Required for ExcelExporter (^4.0).",
+        "intervention/image": "Required to handling and manipulation upload images (~2.3).",
+        "spatie/eloquent-sortable": "Required to built orderable gird."
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Encore\\Admin\\AdminServiceProvider"
+            ],
+            "aliases": {
+                "Admin": "Encore\\Admin\\Facades\\Admin"
+            }
+        }
+    }
+}
