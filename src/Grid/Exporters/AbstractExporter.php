@@ -4,7 +4,7 @@ namespace Encore\Admin\Grid\Exporters;
 
 use Encore\Admin\Grid;
 
-abstract class AbstractExporter implements ExporterInterface
+abstract class AbstractExporter implements GridExporterInterface
 {
     /**
      * @var \Encore\Admin\Grid

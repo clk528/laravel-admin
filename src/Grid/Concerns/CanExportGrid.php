@@ -4,14 +4,14 @@ namespace Encore\Admin\Grid\Concerns;
 
 use Encore\Admin\Grid;
 use Encore\Admin\Grid\Exporter;
-use Encore\Admin\Grid\Exporters\AbstractExporter;
+use Encore\Admin\Grid\Exporters\ExporterInterface;
 
 trait CanExportGrid
 {
     /**
      * Export driver.
      *
-     * @var string
+     * @var string|ExporterInterface|null
      */
     protected $exporter;
 
@@ -41,7 +41,7 @@ trait CanExportGrid
     /**
      * @param string $scope
      *
-     * @return AbstractExporter
+     * @return ExporterInterface
      */
     protected function getExporter($scope)
     {
@@ -51,7 +51,7 @@ trait CanExportGrid
     /**
      * Set exporter driver for Grid to export.
      *
-     * @param $exporter
+     * @param string|ExporterInterface|null $exporter
      *
      * @return $this
      */

@@ -4,6 +4,7 @@ namespace Encore\Admin\Tests\Compatibility;
 
 use Encore\Admin\Auth\Database\Role;
 use Encore\Admin\Grid;
+use Encore\Admin\Grid\Exporter;
 use Encore\Admin\Grid\Exporters\ExcelExporter;
 use Maatwebsite\Excel\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -19,10 +20,12 @@ class ExcelExporterTest extends TestCase
     {
         $this->migrateAdmin();
         Role::create(['name' => 'Auditor', 'slug' => 'auditor']);
-        $exporter = new class(new Grid(new Role())) extends ExcelExporter {
+        $grid = new Grid(new Role());
+        $exporter = new class extends ExcelExporter {
             protected $fileName = 'roles.xlsx';
             protected $columns = ['id' => 'ID', 'name' => 'Name'];
         };
+        $exporter = (new Exporter($grid))->resolve($exporter)->withScope('all');
         $this->assertSame(['ID', 'Name'], $exporter->headings());
         $this->assertSame('Auditor', $exporter->query()->first()->name);
         $this->assertStringStartsWith('PK', $exporter->raw(Excel::XLSX));

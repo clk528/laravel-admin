@@ -4,6 +4,8 @@ namespace Encore\Admin\Grid;
 
 use Encore\Admin\Grid;
 use Encore\Admin\Grid\Exporters\CsvExporter;
+use Encore\Admin\Grid\Exporters\ExporterInterface;
+use InvalidArgumentException;
 
 class Exporter
 {
@@ -34,7 +36,7 @@ class Exporter
     public static $queryName = '_export_';
 
     /**
-     * @var Grid\Exporters\AbstractExporter
+     * @var ExporterInterface
      */
     protected static $exporter;
 
@@ -74,17 +76,28 @@ class Exporter
     /**
      * Resolve export driver.
      *
-     * @param string $driver
+     * @param string|ExporterInterface|null $driver
      *
-     * @return CsvExporter
+     * @return ExporterInterface
      */
     public function resolve($driver)
     {
-        if ($driver instanceof Grid\Exporters\AbstractExporter) {
+        if ($driver instanceof ExporterInterface) {
+            // Also accept existing standalone exporters using the original interface.
+            if (!is_callable([$driver, 'setGrid']) || !is_callable([$driver, 'withScope'])) {
+                throw new InvalidArgumentException(
+                    'Grid exporters must provide public setGrid() and withScope() methods. Implement GridExporterInterface for the complete contract.'
+                );
+            }
+
             return $driver->setGrid($this->grid);
         }
 
-        return $this->getExporter($driver);
+        if ($driver !== null && !is_string($driver)) {
+            throw new InvalidArgumentException('An export driver must be a name, an ExporterInterface instance, or null.');
+        }
+
+        return $this->getExporter($driver ?? '');
     }
 
     /**
@@ -92,7 +105,7 @@ class Exporter
      *
      * @param string $driver
      *
-     * @return CsvExporter
+     * @return ExporterInterface
      */
     protected function getExporter($driver)
     {

@@ -68,6 +68,16 @@ php artisan package:discover
 - **前端资源**：AdminLTE、jQuery 及随包插件保留原有版本，本次没有升级前端组件，也未完成全面的浏览器交互回归。
 - **第三方扩展**：原版 laravel-admin 扩展需逐个验证 Laravel 13 和 PHP 8.3+ 兼容性。
 
+## 自定义表格导出器
+
+表格导出器可以继承包内的 `AbstractExporter` / `ExcelExporter`，也可以独立实现 `Encore\Admin\Grid\Exporters\GridExporterInterface`。完整接口包含 `setGrid(Grid $grid)`、`withScope(string $scope)` 和 `export()`；前两个方法需返回当前导出器，供表格连续调用。
+
+已有独立导出器如果实现了原有 `ExporterInterface`，并提供公开的 `setGrid()`、`withScope()` 方法，仍可直接传入 `$grid->exporter($exporter)`，无需强制修改继承关系。仅实现 `export()` 的对象不满足表格导出要求，解析时会抛出明确的 `InvalidArgumentException`。
+
+`withScope()` 接收 `all`、`page:<页码>` 或 `selected:<逗号分隔的 ID>`。继承包内导出基类时由基类处理；独立实现需自行应用这些范围。原有注册驱动名称及默认 CSV 导出保持支持。
+
+宿主项目若覆写 `getExporter()` 且将返回类型限定为 `AbstractExporter`，使用独立导出器时应调整为 `ExporterInterface`。项目侧为绕过旧解析器增加的兼容分支，可在升级到包含此修复的包版本后移除。
+
 ## 开发与测试
 
 在本包目录安装开发依赖并运行测试：
